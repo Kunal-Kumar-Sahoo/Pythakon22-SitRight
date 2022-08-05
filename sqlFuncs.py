@@ -4,7 +4,7 @@ conn_obj = sqlite3.connect('userData.db')
 cursor_obj = conn_obj.cursor()
 
 
-def func_clearData():
+def func_clearData() -> None:
     cursor_obj.execute("DROP TABLE IF EXISTS data_user")
     table = """CREATE TABLE "data_user" ("userID" INTEGER NOT NULL, 
     "userName" TEXT NOT NULL, 
@@ -15,7 +15,7 @@ def func_clearData():
     print("Table data cleared")
 
 
-def userCredCheck(username, password):
+def userCredCheck(username: str, password: str) -> bool:
     # while True:
     # remaining body was initially inside the while loop
     params = (username, password)
@@ -29,7 +29,7 @@ def userCredCheck(username, password):
         return False
 
 
-def updateViolation(username,password, number_of_violations=1):
+def updateViolation(username: str, password: str, number_of_violations: int = 1) -> None:
     while True:
         # username = str(input("Enter the Username: "))
         cursor_obj.execute("SELECT userViolations FROM data_user WHERE userName = ?", username)
@@ -41,8 +41,5 @@ def updateViolation(username,password, number_of_violations=1):
             # params2 = (violations, username)
             params2 = (violations1, username, password)
             cursor_obj.execute("UPDATE data_user SET userViolations = ? WHERE userName = ? AND userPass = ?", params2)
-            break
-        else:
-            print("User is non existing or you have entered wrong username")
             break
 

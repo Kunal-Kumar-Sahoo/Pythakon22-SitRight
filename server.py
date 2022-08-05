@@ -10,8 +10,11 @@ def handle(client):
             # print(message)
             username = message[0:message.index(':')]
             password = message[message.index(':') + 1:]
+            f = open("credential.txt", 'w')
             print(username, password)
-            return username, password
+            f.write(f'{username}\n{password}')
+            print('success')
+            f.close()
         except Exception as e:
             clients.remove(client)
             client.close()

@@ -1,36 +1,14 @@
 import cv2
 import mediapipe as mp
 import math
-import sqlDataTest
+# import sqlDataTest
 import sqlFuncs
 
-import socket
-import argparse
-import threading
+import os
 
 is_user_authenticated = False
-
-def handle(client):
-    while True:
-        try:
-            global message, username, password
-            message = client.recv(1024).decode('utf-8')
-            username = message[0:message.index(':')]
-            password = message[message.index(':') + 1:]
-            print(username, password)
-        except Exception as e:
-            clients.remove(client)
-            client.close()
-            print(e)
-            break
-
-def receive():
-    while True:
-        client, address = server.accept()
-        print(f'Connected with {address}')
-        clients.append(client)
-        thread = threading.Thread(target=handle, args=(client,))
-        thread.start()
+username = ''
+password = ''
 
 class PoseDetector:
     def __init__(self) -> None:
@@ -73,10 +51,10 @@ class PoseDetector:
 
         return thetaDegrees
 
-    def sendWarning(self):
+    def sendWarning(self) -> None:
         f = open('./warning.txt', 'w')
         f.close()
-        sqlFuncs.updateV
+        sqlFuncs.updateViolation(username, password)
 
     def getVideoStream(self, camIdx: int) -> None:
         self.__file_name = camIdx
@@ -96,7 +74,7 @@ class PoseDetector:
             int(self.__cap.get(cv2.CAP_PROP_FRAME_HEIGHT)),
         )
 
-    def processing(self):
+    def processing(self) -> None:
         try:
             while self.__cap.isOpened():
                 success, img = self.__cap.read()
@@ -205,26 +183,26 @@ class PoseDetector:
 
 
 if __name__ == '__main__':
-    global username, password
-    parser = argparse.ArgumentParser(description='Login server')
-    parser.add_argument('host')
-    parser.add_argument('-p', metavar='PORT', type=int, default=1060)
-    args = parser.parse_args()
-    HOST = args.host
-    PORT = args.p
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind((HOST, PORT))
-    server.listen()
-    global message
-    global clients
-    clients = []
-    print('Server running')
-    receive()
-
-    is_user_authenticated = sqlFuncs.userCredCheck(username, password)
-    if is_user_authenticated:
-        pd = PoseDetector()
-        pd.getVideoStream(2)
-        pd.processing()
-    else:
-        pass
+    username = ''
+    password = ''
+    status = True
+    while status:
+        if 'credential.txt' in os.listdir():
+            f = open('credential.txt')
+            content = f.readlines()
+            username = content[0][:-1]
+            password = content[1]
+            print(username, content)
+            f.close()
+            os.remove('credential.txt')
+            status = False
+            print(username, password)
+            is_user_authenticated = sqlFuncs.userCredCheck(username, password)
+            print(f'is_user_authenticated: {is_user_authenticated}')
+            if is_user_authenticated:
+                print("Starting monitoring")
+                pd = PoseDetector()
+                pd.getVideoStream(0)
+                pd.processing()
+            else:
+                pass
