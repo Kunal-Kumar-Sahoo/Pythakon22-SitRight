@@ -15,9 +15,12 @@ def func_clearData() -> None:
     print("Table data cleared")
 
 
-def getEmailId(username: str, password: str):
-    pass
-
+def getEmailId(username: str, password: str) -> str:
+    params = (username, password)
+    cursor_obj.execute("SELECT emailId FROM data_user WHERE userName = ? AND userPass = ?", params)
+    row = cursor_obj.fetchone()
+    email = row[0]
+    return email
 
 
 def userCredCheck(username: str, password: str) -> bool:

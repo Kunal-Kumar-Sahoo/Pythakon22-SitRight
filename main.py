@@ -176,6 +176,7 @@ class PoseDetector:
                 cv2.imshow('Video feed:', img)
 
                 if cv2.waitKey(1) & 0xFF == ord('q'):
+                    quit.create_email(username, password)
                     print('Quitting')
                     break
         except Exception as e:

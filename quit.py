@@ -1,15 +1,16 @@
 import smtplib
 from email.message import EmailMessage
 import ssl
+import sqlFuncs
 
 # lpykkqlzwepalonk
 
-email_sender = 'whwhnshs@gmail.com'
 email_receiver = 'parikhdev13@gmail.com'
 em = EmailMessage()
 
 
-def create_email():
+def create_email(username, password):
+    email_sender = sqlFuncs.getEmailId(username, password)
     subject = "Session summary"
     body = """
     sfjhsvefkgwewjhfevkhw
