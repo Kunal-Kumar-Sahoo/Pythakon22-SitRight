@@ -29,7 +29,7 @@ def userCredCheck(username, password):
         return False
 
 
-def updateViolation(username,password, number_of_violations=1):
+def updateViolation(username, password, number_of_violations=1):
     while True:
         # username = str(input("Enter the Username: "))
         cursor_obj.execute("SELECT userViolations FROM data_user WHERE userName = ?", username)
