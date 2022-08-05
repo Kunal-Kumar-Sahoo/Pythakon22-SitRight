@@ -6,7 +6,7 @@ import time
 url = "https://api.pushbullet.com/v2/pushes"
 data = {'type': 'note', 'title': 'alert', 'body': 'Incorrect posture'}
 sess = requests.Session()
-sess.auth = ('o.otJ6smKZPxOokYuq9Gsm3R1FqzheyORM', '')
+sess.auth = ('o.JIYB9LelVfWIJEeL8ovfxTbDDxjwRcAu', '')
 sess.headers.update({'Content-Type': 'application/json'})
 
 data = {'type': 'note',
