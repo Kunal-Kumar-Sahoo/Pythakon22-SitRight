@@ -5,12 +5,12 @@ import sqlFuncs
 
 # lpykkqlzwepalonk
 
-email_receiver = 'parikhdev13@gmail.com'
+email_sender = 'whwhnshs@gmail.com'
 em = EmailMessage()
 
 
 def create_email(username, password):
-    email_sender = sqlFuncs.getEmailId(username, password)
+    email_receiver = sqlFuncs.getEmailId(username, password)
     subject = "Session summary"
     body = """
     sfjhsvefkgwewjhfevkhw
