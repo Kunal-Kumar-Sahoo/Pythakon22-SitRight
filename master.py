@@ -31,6 +31,7 @@ class PoseDetector:
 
     def getVideoStream(self, filePath: str) -> None:
         self.__file_name = filePath
+        print(filePath)
         self.__cap = cv2.VideoCapture(self.__file_name)
         self.__fps = int(self.__cap.get(cv2.CAP_PROP_FPS))
         self.__dimensions = (
@@ -66,8 +67,6 @@ class PoseDetector:
             dic['leftHipY'] = int(lm.landmark[lmPose.LEFT_HIP].y * h)
             fieldnames = ['name', 'leftShoulderX', 'leftShoulderY', 'rightShoulderX', 'rightShoulderY', 'leftEarX', 'leftEarY', 'leftHipX', 'leftHipY']
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-            print(dic)
-            print('hello')
             writer.writerow(dic)
             writer.writeheader()
 
@@ -77,5 +76,6 @@ if __name__ == '__main__':
     di = os.fsencode(r'C:\Users\Kishan Pipaliya\Desktop\Sitting posture')
     csvfile = open('data.csv', 'w', newline='\n')
     for f in os.listdir(di):
-        pd.getVideoStream('C:\\Users\\Kishan Pipaliya\\Desktop\\Sitting posture'+str(f))
+        pd.getVideoStream('C:\\Users\\Kishan Pipaliya\\Desktop\\Sitting posture\\'+f.decode('utf-8'))
         pd.processing()
+        break
