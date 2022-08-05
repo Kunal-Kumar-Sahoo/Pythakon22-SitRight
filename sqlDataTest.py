@@ -7,8 +7,9 @@ def create_table():
 
     table = """CREATE TABLE IF NOT EXISTS "data_user" ("userID" INTEGER NOT NULL, 
     "userName" TEXT NOT NULL, 
-    "userPass" TEXT NOT NULL, "
-    userViolations" INTEGER, 
+    "userPass" TEXT NOT NULL,
+    "emailId" TEXT NOT NULL, 
+    "userViolations" INTEGER, 
     PRIMARY KEY("userID"));"""
 
     cursor_obj.execute(table)
@@ -20,11 +21,12 @@ def add_user():
     cursor_obj = conn_obj.cursor()
     a1 = int(input("Enter userID: "))
     b1 = str(input("Enter userName: "))
-    c1 = str(input("Enter userPass"))
+    c1 = str(input("Enter userPass: "))
+    d1 = str(input("Enter emailId: "))
 
-    params = (a1, b1, c1, 0)
+    params = (a1, b1, c1, d1, 0)
 
-    cursor_obj.execute("INSERT INTO data_user VALUES (?,?,?,?);", params)
+    cursor_obj.execute("INSERT INTO data_user VALUES (?,?,?,?,?);", params)
     conn_obj.commit()
     print("Data entered successfully")
 
