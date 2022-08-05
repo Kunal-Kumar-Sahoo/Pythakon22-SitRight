@@ -1,8 +1,9 @@
+import csv
 import cv2
 import mediapipe as mp
 import math
 import time
-from plyer import notification
+
 
 class PoseDetector:
     def __init__(self) -> None:
@@ -94,59 +95,6 @@ class PoseDetector:
             leftHipX = int(lm.landmark[lmPose.LEFT_HIP].x * w)
             leftHipY = int(lm.landmark[lmPose.LEFT_HIP].y * h)
 
-
-
-            if self.neckInclination < 40 and self.torsoInclination < 10:
-                self.__bad_frames = 0
-                self.__good_frames += 1
-
-                cv2.putText(img, angleTextString, (10, 30), self.__font, 0.9, self.__colors['light green'], 2)
-                cv2.putText(img, str(int(self.neckInclination)), (leftShoulderX+10, leftShoulderY), self.__font, 0.9,
-                            self.__colors['light green'], 2)
-                cv2.putText(img, str(int(self.torsoInclination)), (leftHipX + 10, leftHipY), self.__font, 0.9,
-                            self.__colors['light green'], 2)
-
-                cv2.line(img, (leftShoulderX, leftShoulderY), (leftEarX, leftEarY), self.__colors['green'], 4)
-                cv2.line(img, (leftShoulderX, leftShoulderY), (leftShoulderX, leftShoulderY-100),
-                         self.__colors['green'], 4)
-                cv2.line(img, (leftShoulderX, leftShoulderY), (leftEarX, leftEarY), self.__colors['green'], 4)
-                cv2.line(img, (leftShoulderX, leftShoulderY), (leftShoulderX, leftShoulderY - 100),
-                         self.__colors['green'], 4)
-            else:
-                self.__good_frames = 0
-                self.__bad_frames += 1
-
-                cv2.putText(img, angleTextString, (10, 30), self.__font, 0.9, self.__colors['red'], 2)
-                cv2.putText(img, str(int(self.neckInclination)), (leftShoulderX + 10, leftShoulderY), self.__font, 0.9,
-                            self.__colors['red'], 2)
-                cv2.putText(img, str(int(self.torsoInclination)), (leftHipX + 10, leftHipY), self.__font, 0.9,
-                            self.__colors['red'], 2)
-
-                cv2.line(img, (leftShoulderX, leftShoulderY), (leftEarX, leftEarY), self.__colors['red'], 4)
-                cv2.line(img, (leftShoulderX, leftShoulderY), (leftShoulderX, leftShoulderY - 100),
-                         self.__colors['red'], 4)
-                cv2.line(img, (leftShoulderX, leftShoulderY), (leftEarX, leftEarY), self.__colors['red'], 4)
-                cv2.line(img, (leftShoulderX, leftShoulderY), (leftShoulderX, leftShoulderY - 100),
-                         self.__colors['red'], 4)
-
-            good_time = self.__good_frames / self.__fps
-            bad_time = self.__bad_frames / self.__fps
-
-            if good_time > 0:
-                cv2.putText(img, f'Good posture time: {round(good_time, 1)}s', (10, h-20),
-                            self.__font, 0.9, self.__colors['green'])
-            else:
-                cv2.putText(img, f'Bad posture time: {round(bad_time, 1)}s', (10, h - 20),
-                            self.__font, 0.9, self.__colors['red'])
-
-            if bad_time >= 3:
-                self.sendWarning()
-
-            cv2.imshow('Video feed:', img)
-
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                print('Quitting')
-                break
 
 if __name__ == '__main__':
     pd = PoseDetector()
