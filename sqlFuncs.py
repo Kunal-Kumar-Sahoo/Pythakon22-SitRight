@@ -15,6 +15,11 @@ def func_clearData() -> None:
     print("Table data cleared")
 
 
+def getEmailId(username: str, password: str):
+    pass
+
+
+
 def userCredCheck(username: str, password: str) -> bool:
     # while True:
     # remaining body was initially inside the while loop
@@ -29,11 +34,7 @@ def userCredCheck(username: str, password: str) -> bool:
         return False
 
 
-<<<<<<< HEAD
-def updateViolation(username, password, number_of_violations=1):
-=======
 def updateViolation(username: str, password: str, number_of_violations: int = 1) -> None:
->>>>>>> d10057f60b9ff368def5d581a3d0d6b94df051d9
     while True:
         # username = str(input("Enter the Username: "))
         cursor_obj.execute("SELECT userViolations FROM data_user WHERE userName = ?", username)

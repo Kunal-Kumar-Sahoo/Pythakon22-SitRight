@@ -5,7 +5,6 @@ import ssl
 # lpykkqlzwepalonk
 
 email_sender = 'whwhnshs@gmail.com'
-email_password = 'lpykkqlzwepalonk'
 email_receiver = 'parikhdev13@gmail.com'
 em = EmailMessage()
 

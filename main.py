@@ -3,7 +3,7 @@ import mediapipe as mp
 import math
 # import sqlDataTest
 import sqlFuncs
-
+import quit
 import os
 
 is_user_authenticated = False
