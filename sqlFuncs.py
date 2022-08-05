@@ -15,26 +15,32 @@ def func_clearData():
     print("Table data cleared")
 
 
-def userCredCheck():
-    while True:
-        username = str(input("Enter your Username: "))
-        password = str(input("Enter your Password: "))
-        params = (username, password)
-        cursor_obj.execute("SELECT * FROM data_user WHERE userName = ? AND userPass = ?", params)
-        row = cursor_obj.fetchone()
-        if row is not None:
-            print("Correct Password")
-            break
+def userCredCheck(username, password):
+    # while True:
+    # remaining body was initially inside the while loop
+    params = (username, password)
+    cursor_obj.execute("SELECT * FROM data_user WHERE userName = ? AND userPass = ?", params)
+    row = cursor_obj.fetchone()
+    if row is not None:
+        print("Correct Password")
+        return True
+    else:
+        print("User is non existing or you have entered wrong username/password")
+        return False
 
 
-def updateViolation():
+def updateViolation(username, number_of_violations=1):
     while True:
-        username = str(input("Enter the Username: "))
-        violations = int(input("Enter the number of violations: "))
+        # username = str(input("Enter the Username: "))
         cursor_obj.execute("SELECT * FROM data_user WHERE userName = ?", username)
         row = cursor_obj.fetchone()
-        params2 = (violations, username)
         if row is not None:
+            # violations = int(input("Enter the number of violations: "))
+            # params2 = (violations, username)
+            params2 = (number_of_violations, username)
             cursor_obj.execute("UPDATE data_user SET userViolations = ? WHERE userName = ? AND userPass = ?", params2)
+            break
+        else:
+            print("User is non existing or you have entered wrong username")
             break
 

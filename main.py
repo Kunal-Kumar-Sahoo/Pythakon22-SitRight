@@ -1,6 +1,11 @@
 import cv2
 import mediapipe as mp
 import math
+import sqlDataTest
+import sqlFuncs
+
+
+is_user_authenticated = False
 
 class PoseDetector:
     def __init__(self) -> None:
@@ -46,6 +51,7 @@ class PoseDetector:
     def sendWarning(self):
         f = open('./warning.txt', 'w')
         f.close()
+        sqlFuncs.updateV
 
     def getVideoStream(self, camIdx: int) -> None:
         self.__file_name = camIdx
@@ -172,7 +178,15 @@ class PoseDetector:
         except Exception as e:
             self.processing()
 
+
 if __name__ == '__main__':
-    pd = PoseDetector()
-    pd.getVideoStream(4)
-    pd.processing()
+    global username
+    username = input()
+    password = input()
+    is_user_authenticated = sqlFuncs.userCredCheck(username, password)
+    if is_user_authenticated:
+        pd = PoseDetector()
+        pd.getVideoStream(4)
+        pd.processing()
+    else:
+        pass
