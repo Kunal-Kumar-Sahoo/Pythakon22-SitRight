@@ -4,8 +4,33 @@ import math
 import sqlDataTest
 import sqlFuncs
 
+import socket
+import argparse
+import threading
 
 is_user_authenticated = False
+
+def handle(client):
+    while True:
+        try:
+            global message, username, password
+            message = client.recv(1024).decode('utf-8')
+            username = message[0:message.index(':')]
+            password = message[message.index(':') + 1:]
+            print(username, password)
+        except Exception as e:
+            clients.remove(client)
+            client.close()
+            print(e)
+            break
+
+def receive():
+    while True:
+        client, address = server.accept()
+        print(f'Connected with {address}')
+        clients.append(client)
+        thread = threading.Thread(target=handle, args=(client,))
+        thread.start()
 
 class PoseDetector:
     def __init__(self) -> None:
@@ -180,13 +205,26 @@ class PoseDetector:
 
 
 if __name__ == '__main__':
-    global username
-    username = input()
-    password = input()
+    global username, password
+    parser = argparse.ArgumentParser(description='Login server')
+    parser.add_argument('host')
+    parser.add_argument('-p', metavar='PORT', type=int, default=1060)
+    args = parser.parse_args()
+    HOST = args.host
+    PORT = args.p
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind((HOST, PORT))
+    server.listen()
+    global message
+    global clients
+    clients = []
+    print('Server running')
+    receive()
+
     is_user_authenticated = sqlFuncs.userCredCheck(username, password)
     if is_user_authenticated:
         pd = PoseDetector()
-        pd.getVideoStream(4)
+        pd.getVideoStream(2)
         pd.processing()
     else:
         pass

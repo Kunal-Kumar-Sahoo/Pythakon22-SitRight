@@ -3,10 +3,10 @@ import cv2
 index = 0
 arr = []
 
-while True:
+while index <= 10:
     cap = cv2.VideoCapture(index)
     if not cap.read()[0]:
-        break
+        pass
     else:
         arr.append(index)
     cap.release()
