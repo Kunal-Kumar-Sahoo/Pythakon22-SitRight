@@ -1,7 +1,7 @@
 import cv2
 import mediapipe as mp
 import math
-# import sqlDataTest
+import time
 import sqlFuncs
 import quit
 import os
@@ -9,6 +9,7 @@ import os
 is_user_authenticated = False
 username = ''
 password = ''
+t1, t2 = None, None
 
 class PoseDetector:
     def __init__(self) -> None:
@@ -176,7 +177,8 @@ class PoseDetector:
                 cv2.imshow('Video feed:', img)
 
                 if cv2.waitKey(1) & 0xFF == ord('q'):
-                    quit.create_email(username, password)
+                    t2 = time.time()
+                    quit.create_email(username, t2-t1, sqlFuncs.getViolation(username))
                     print('Quitting')
                     break
         except Exception as e:
@@ -184,6 +186,7 @@ class PoseDetector:
 
 
 if __name__ == '__main__':
+    t1 = time.time()
     username = ''
     password = ''
     status = True

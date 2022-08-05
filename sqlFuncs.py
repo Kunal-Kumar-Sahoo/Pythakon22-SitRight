@@ -15,9 +15,9 @@ def func_clearData() -> None:
     print("Table data cleared")
 
 
-def getEmailId(username: str, password: str) -> str:
-    params = (username, password)
-    cursor_obj.execute("SELECT emailId FROM data_user WHERE userName = ? AND userPass = ?", params)
+def getEmailId(username: str) -> str:
+    params = (username)
+    cursor_obj.execute("SELECT emailId FROM data_user WHERE userName = ?", params)
     row = cursor_obj.fetchone()
     email = row[0]
     return email
@@ -37,7 +37,7 @@ def userCredCheck(username: str, password: str) -> bool:
         return False
 
 
-def updateViolation(username: str, password: str, number_of_violations: int = 1) -> None:
+def updateViolation(username: str, number_of_violations: int = 1) -> None:
     while True:
         # username = str(input("Enter the Username: "))
         cursor_obj.execute("SELECT userViolations FROM data_user WHERE userName = ?", username)
@@ -47,7 +47,14 @@ def updateViolation(username: str, password: str, number_of_violations: int = 1)
         if row is not None:
             # violations = int(input("Enter the number of violations: "))
             # params2 = (violations, username)
-            params2 = (violations1, username, password)
-            cursor_obj.execute("UPDATE data_user SET userViolations = ? WHERE userName = ? AND userPass = ?", params2)
+            params2 = (violations1, username)
+            cursor_obj.execute("UPDATE data_user SET userViolations = ? WHERE userName = ?", params2)
             break
+
+def getViolation(username: str, number_of_violations: int = 1) -> int:
+    while True:
+        # username = str(input("Enter the Username: "))
+        cursor_obj.execute("SELECT userViolations FROM data_user WHERE userName = ?", username)
+        row = cursor_obj.fetchone()
+        return row[0]
 

@@ -5,24 +5,20 @@ import sqlFuncs
 
 # lpykkqlzwepalonk
 
-email_sender = 'whwhnshs@gmail.com'
-em = EmailMessage()
-
-
-def create_email(username, password):
-    email_receiver = sqlFuncs.getEmailId(username, password)
+def create_email(username, time, bad_posture):
+    email_sender = 'whwhnshs@gmail.com'
+    email_password = "lpykkqlzwepalonk"
+    email_receiver = sqlFuncs.getEmailId(username)
     subject = "Session summary"
-    body = """
-    sfjhsvefkgwewjhfevkhw
-    """
-
+    body = f'''
+    Total time worked: {time}
+    Consistent bad posture maintained: {bad_posture} times
+    '''
+    em = EmailMessage()
     em['From'] = email_sender
     em['To'] = email_receiver
     em['Subject'] = subject
     em.set_content(body)
-
-
-def send_email():
     context = ssl.create_default_context()
 
     with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
@@ -30,9 +26,5 @@ def send_email():
         smtp.sendmail(email_sender, email_receiver, em.as_string())
 
 
-def final_email():
-    create_email()
-    send_email()
 
 
-final_email()
