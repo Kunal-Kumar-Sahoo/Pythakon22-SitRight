@@ -66,110 +66,113 @@ class PoseDetector:
         )
 
     def processing(self):
-        while self.__cap.isOpened():
-            success, img = self.__cap.read()
-            if not success:
-                print('null video frames')
-                break
-            self.__fps = self.__cap.get(cv2.CAP_PROP_FPS)
+        try:
+            while self.__cap.isOpened():
+                success, img = self.__cap.read()
+                if not success:
+                    print('null video frames')
+                    break
+                self.__fps = self.__cap.get(cv2.CAP_PROP_FPS)
 
-            h, w = img.shape[:2]
+                h, w = img.shape[:2]
 
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            keypoints = self.__pose.process(img)
-            img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                keypoints = self.__pose.process(img)
+                img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
-            lm = keypoints.pose_landmarks
-            lmPose = self.__mp_pose.PoseLandmark
+                lm = keypoints.pose_landmarks
+                lmPose = self.__mp_pose.PoseLandmark
 
-            leftShoulderX = int(lm.landmark[lmPose.LEFT_SHOULDER].x * w)
-            leftShoulderY = int(lm.landmark[lmPose.LEFT_SHOULDER].y * h)
-            rightShoulderX = int(lm.landmark[lmPose.RIGHT_SHOULDER].x * w)
-            rightShoulderY = int(lm.landmark[lmPose.RIGHT_SHOULDER].y * h)
-            leftEarX = int(lm.landmark[lmPose.LEFT_EAR].x * w)
-            leftEarY = int(lm.landmark[lmPose.LEFT_EAR].y * h)
-            leftHipX = int(lm.landmark[lmPose.LEFT_HIP].x * w)
-            leftHipY = int(lm.landmark[lmPose.LEFT_HIP].y * h)
+                leftShoulderX = int(lm.landmark[lmPose.LEFT_SHOULDER].x * w)
+                leftShoulderY = int(lm.landmark[lmPose.LEFT_SHOULDER].y * h)
+                rightShoulderX = int(lm.landmark[lmPose.RIGHT_SHOULDER].x * w)
+                rightShoulderY = int(lm.landmark[lmPose.RIGHT_SHOULDER].y * h)
+                leftEarX = int(lm.landmark[lmPose.LEFT_EAR].x * w)
+                leftEarY = int(lm.landmark[lmPose.LEFT_EAR].y * h)
+                leftHipX = int(lm.landmark[lmPose.LEFT_HIP].x * w)
+                leftHipY = int(lm.landmark[lmPose.LEFT_HIP].y * h)
 
-            offset = PoseDetector.findDistance(leftShoulderX, leftShoulderY,
-                                               rightShoulderX, rightShoulderY)
+                offset = PoseDetector.findDistance(leftShoulderX, leftShoulderY,
+                                                   rightShoulderX, rightShoulderY)
 
-            if offset < 100:
-                cv2.putText(img, f'{int(offset)} Aligned',
-                            (w-150, 30), self.__font, 0.9, self.__colors['green'], 2)
-            else:
-                cv2.putText(img, f'{int(offset)} Not aligned',
-                            (w-150, 30), self.__font, 0.9, self.__colors['red'], 2)
+                if offset < 100:
+                    cv2.putText(img, f'{int(offset)} Aligned',
+                                (w-150, 30), self.__font, 0.9, self.__colors['green'], 2)
+                else:
+                    cv2.putText(img, f'{int(offset)} Not aligned',
+                                (w-150, 30), self.__font, 0.9, self.__colors['red'], 2)
 
-            self.neckInclination = PoseDetector.findAngle(leftShoulderX, leftShoulderY,
-                                                          leftEarX, leftEarY)
-            self.torsoInclination = PoseDetector.findAngle(leftHipX, leftHipY,
-                                                           leftShoulderX, leftShoulderY)
+                self.neckInclination = PoseDetector.findAngle(leftShoulderX, leftShoulderY,
+                                                              leftEarX, leftEarY)
+                self.torsoInclination = PoseDetector.findAngle(leftHipX, leftHipY,
+                                                               leftShoulderX, leftShoulderY)
 
-            cv2.circle(img, (leftShoulderX, leftShoulderY), 7, self.__colors['yellow'], -1)
-            cv2.circle(img, (leftEarX, leftEarY), 7, self.__colors['yellow'], -1)
+                cv2.circle(img, (leftShoulderX, leftShoulderY), 7, self.__colors['yellow'], -1)
+                cv2.circle(img, (leftEarX, leftEarY), 7, self.__colors['yellow'], -1)
 
-            cv2.circle(img, (leftShoulderX, leftShoulderY-100), 7, self.__colors['yellow'], -1)
-            cv2.circle(img, (rightShoulderX, rightShoulderY-100), 7, self.__colors['pink'], -1)
-            cv2.circle(img, (leftHipX, leftHipY), 7, self.__colors['yellow'], -1)
+                cv2.circle(img, (leftShoulderX, leftShoulderY-100), 7, self.__colors['yellow'], -1)
+                cv2.circle(img, (rightShoulderX, rightShoulderY-100), 7, self.__colors['pink'], -1)
+                cv2.circle(img, (leftHipX, leftHipY), 7, self.__colors['yellow'], -1)
 
-            # cv2.circle(img, (leftHipX, leftHipY-100), 7, self.__colors['yellow'], -1)
+                # cv2.circle(img, (leftHipX, leftHipY-100), 7, self.__colors['yellow'], -1)
 
-            angleTextString = f'Neck: {int(self.neckInclination)} Torso: {int(self.torsoInclination)}'
+                angleTextString = f'Neck: {int(self.neckInclination)} Torso: {int(self.torsoInclination)}'
 
-            if self.neckInclination < 40 and self.torsoInclination < 10:
-                self.__bad_frames = 0
-                self.__good_frames += 1
+                if self.neckInclination < 40 and self.torsoInclination < 10:
+                    self.__bad_frames = 0
+                    self.__good_frames += 1
 
-                cv2.putText(img, angleTextString, (10, 30), self.__font, 0.9, self.__colors['light green'], 2)
-                cv2.putText(img, str(int(self.neckInclination)), (leftShoulderX+10, leftShoulderY), self.__font, 0.9,
-                            self.__colors['light green'], 2)
-                cv2.putText(img, str(int(self.torsoInclination)), (leftHipX + 10, leftHipY), self.__font, 0.9,
-                            self.__colors['light green'], 2)
+                    cv2.putText(img, angleTextString, (10, 30), self.__font, 0.9, self.__colors['light green'], 2)
+                    cv2.putText(img, str(int(self.neckInclination)), (leftShoulderX+10, leftShoulderY), self.__font, 0.9,
+                                self.__colors['light green'], 2)
+                    cv2.putText(img, str(int(self.torsoInclination)), (leftHipX + 10, leftHipY), self.__font, 0.9,
+                                self.__colors['light green'], 2)
 
-                cv2.line(img, (leftShoulderX, leftShoulderY), (leftEarX, leftEarY), self.__colors['green'], 4)
-                cv2.line(img, (leftShoulderX, leftShoulderY), (leftShoulderX, leftShoulderY-100),
-                         self.__colors['green'], 4)
-                cv2.line(img, (leftShoulderX, leftShoulderY), (leftEarX, leftEarY), self.__colors['green'], 4)
-                cv2.line(img, (leftShoulderX, leftShoulderY), (leftShoulderX, leftShoulderY - 100),
-                         self.__colors['green'], 4)
-            else:
-                self.__good_frames = 0
-                self.__bad_frames += 1
+                    cv2.line(img, (leftShoulderX, leftShoulderY), (leftEarX, leftEarY), self.__colors['green'], 4)
+                    cv2.line(img, (leftShoulderX, leftShoulderY), (leftShoulderX, leftShoulderY-100),
+                             self.__colors['green'], 4)
+                    cv2.line(img, (leftShoulderX, leftShoulderY), (leftEarX, leftEarY), self.__colors['green'], 4)
+                    cv2.line(img, (leftShoulderX, leftShoulderY), (leftShoulderX, leftShoulderY - 100),
+                             self.__colors['green'], 4)
+                else:
+                    self.__good_frames = 0
+                    self.__bad_frames += 1
 
-                cv2.putText(img, angleTextString, (10, 30), self.__font, 0.9, self.__colors['red'], 2)
-                cv2.putText(img, str(int(self.neckInclination)), (leftShoulderX + 10, leftShoulderY), self.__font, 0.9,
-                            self.__colors['red'], 2)
-                cv2.putText(img, str(int(self.torsoInclination)), (leftHipX + 10, leftHipY), self.__font, 0.9,
-                            self.__colors['red'], 2)
+                    cv2.putText(img, angleTextString, (10, 30), self.__font, 0.9, self.__colors['red'], 2)
+                    cv2.putText(img, str(int(self.neckInclination)), (leftShoulderX + 10, leftShoulderY), self.__font, 0.9,
+                                self.__colors['red'], 2)
+                    cv2.putText(img, str(int(self.torsoInclination)), (leftHipX + 10, leftHipY), self.__font, 0.9,
+                                self.__colors['red'], 2)
 
-                cv2.line(img, (leftShoulderX, leftShoulderY), (leftEarX, leftEarY), self.__colors['red'], 4)
-                cv2.line(img, (leftShoulderX, leftShoulderY), (leftShoulderX, leftShoulderY - 100),
-                         self.__colors['red'], 4)
-                cv2.line(img, (leftShoulderX, leftShoulderY), (leftEarX, leftEarY), self.__colors['red'], 4)
-                cv2.line(img, (leftShoulderX, leftShoulderY), (leftShoulderX, leftShoulderY - 100),
-                         self.__colors['red'], 4)
+                    cv2.line(img, (leftShoulderX, leftShoulderY), (leftEarX, leftEarY), self.__colors['red'], 4)
+                    cv2.line(img, (leftShoulderX, leftShoulderY), (leftShoulderX, leftShoulderY - 100),
+                             self.__colors['red'], 4)
+                    cv2.line(img, (leftShoulderX, leftShoulderY), (leftEarX, leftEarY), self.__colors['red'], 4)
+                    cv2.line(img, (leftShoulderX, leftShoulderY), (leftShoulderX, leftShoulderY - 100),
+                             self.__colors['red'], 4)
 
-            good_time = self.__good_frames / self.__fps
-            bad_time = self.__bad_frames / self.__fps
+                good_time = self.__good_frames / self.__fps
+                bad_time = self.__bad_frames / self.__fps
 
-            if good_time > 0:
-                cv2.putText(img, f'Good posture time: {round(good_time, 1)}s', (10, h-20),
-                            self.__font, 0.9, self.__colors['green'])
-            else:
-                cv2.putText(img, f'Bad posture time: {round(bad_time, 1)}s', (10, h - 20),
-                            self.__font, 0.9, self.__colors['red'])
+                if good_time > 0:
+                    cv2.putText(img, f'Good posture time: {round(good_time, 1)}s', (10, h-20),
+                                self.__font, 0.9, self.__colors['green'])
+                else:
+                    cv2.putText(img, f'Bad posture time: {round(bad_time, 1)}s', (10, h - 20),
+                                self.__font, 0.9, self.__colors['red'])
 
-            if bad_time >= 3:
-                self.sendWarning()
+                if bad_time >= 3:
+                    self.sendWarning()
 
-            cv2.imshow('Video feed:', img)
+                cv2.imshow('Video feed:', img)
 
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                print('Quitting')
-                break
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    print('Quitting')
+                    break
+        except Exception as e:
+            self.processing()
 
 if __name__ == '__main__':
     pd = PoseDetector()
-    pd.getVideoStream('./media/input.mp4')
+    pd.getVideoStream(4)
     pd.processing()
