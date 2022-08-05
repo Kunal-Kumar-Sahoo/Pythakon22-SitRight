@@ -18,3 +18,4 @@ while True:
         r = sess.post('https://api.pushbullet.com/v2/pushes', data=json.dumps(data))
         os.remove('./warning.txt')
 
+[t]
