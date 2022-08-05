@@ -29,15 +29,17 @@ def userCredCheck(username, password):
         return False
 
 
-def updateViolation(username, number_of_violations=1):
+def updateViolation(username,password, number_of_violations=1):
     while True:
         # username = str(input("Enter the Username: "))
-        cursor_obj.execute("SELECT * FROM data_user WHERE userName = ?", username)
+        cursor_obj.execute("SELECT userViolations FROM data_user WHERE userName = ?", username)
         row = cursor_obj.fetchone()
+        value1 = row[0]
+        violations1 = value1 + number_of_violations
         if row is not None:
             # violations = int(input("Enter the number of violations: "))
             # params2 = (violations, username)
-            params2 = (number_of_violations, username)
+            params2 = (violations1, username, password)
             cursor_obj.execute("UPDATE data_user SET userViolations = ? WHERE userName = ? AND userPass = ?", params2)
             break
         else:
