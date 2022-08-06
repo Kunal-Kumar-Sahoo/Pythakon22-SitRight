@@ -1,7 +1,7 @@
 import cv2
 import mediapipe as mp
 import math
-import time
+import quit, time
 import os
 
 is_user_authenticated = False
@@ -212,8 +212,8 @@ class PoseDetector:
                 cv2.imshow('Video feed:', img)
 
                 if cv2.waitKey(1) & 0xFF == ord('q'):
-                    # t2 = time.time()
-                    # quit.create_email(username, t2-t1, sqlFuncs.getViolation(username))
+                    t2 = time.time()
+                    quit.sendEmail(username, int(t2-t1))
                     print('Quitting')
                     break
         except Exception as e:
@@ -224,7 +224,7 @@ class PoseDetector:
 
 if __name__ == '__main__':
     print('start1')
-    # t1 = time.time()
+    t1 = time.time()
     print('start2')
 
     status = True
@@ -249,7 +249,7 @@ if __name__ == '__main__':
             if is_user_authenticated:
                 print("Starting monitoring")
                 pd = PoseDetector()
-                pd.getVideoStream(4)
+                pd.getVideoStream('./media/input.mp4')
                 pd.processing()
             else:
                 pass

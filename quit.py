@@ -1,18 +1,31 @@
 import smtplib
 from email.message import EmailMessage
 import ssl
-import sqlFuncs
+import csv
 
 # lpykkqlzwepalonk
 
-def create_email(username, time, bad_posture):
+def getPenalties(username):
+    file = open('data.csv', 'r')
+    reader = csv.reader(file, delimiter=',')
+    for line in reader:
+        if username in line:
+            return line[-1]
+def getEmail(username):
+    file = open('data.csv', 'r')
+    reader = csv.reader(file, delimiter=',')
+    for line in reader:
+        if username in line:
+            return line[2]
+
+def sendEmail(username, time):
     email_sender = 'whwhnshs@gmail.com'
     email_password = "lpykkqlzwepalonk"
-    email_receiver = sqlFuncs.getEmailId(username)
+    email_receiver = getEmail(username)
     subject = "Session summary"
     body = f'''
     Total time worked: {time}
-    Consistent bad posture maintained: {bad_posture} times
+    Consistent bad posture maintained: {getPenalties(username)} times
     '''
     em = EmailMessage()
     em['From'] = email_sender
@@ -27,4 +40,5 @@ def create_email(username, time, bad_posture):
 
 
 
-
+if __name__ == '__main__':
+    sendEmail('Dev', getEmail('Dev'), 10, 69)
