@@ -2,14 +2,46 @@ import cv2
 import mediapipe as mp
 import math
 import time
-import sqlFuncs
-import quit
 import os
 
 is_user_authenticated = False
 username = ''
 password = ''
 t1, t2 = None, None
+
+import csv
+
+def authentication(username, pwd):
+    file = open('data.csv', 'r')
+    reader = csv.reader(file, delimiter=',')
+    for line in reader:
+        # print(line)
+        if username in line and pwd in line:
+            return True
+    return False
+
+
+def updatePenalties(username):
+    file = open('data.csv', 'r')
+    reader = csv.reader(file, delimiter=',')
+    st = [line for line in reader]
+    file.close()
+    file_ = open('data.csv', 'w')
+    writer = csv.writer(file_, delimiter=',')
+    for line in st:
+        if username in line:
+            print(line)
+            line[-1] = str(int(line[-1]) + 1)
+            print(line)
+        writer.writerow(line)
+    file_.close()
+
+def getPenalties(username):
+    file = open('data.csv', 'r')
+    reader = csv.reader(file, delimiter=',')
+    for line in reader:
+        if username in line:
+            return line[-1]
 
 class PoseDetector:
     def __init__(self) -> None:
@@ -57,7 +89,7 @@ class PoseDetector:
         f.close()
         print("Warning sent")
         print('Updating counts')
-        # sqlFuncs.updateViolation(username)
+        updatePenalties(username)
         print("Counter updated")
 
     def getVideoStream(self, camIdx: int) -> None:
@@ -194,8 +226,7 @@ if __name__ == '__main__':
     print('start1')
     # t1 = time.time()
     print('start2')
-    username = ''
-    password = ''
+
     status = True
     while status:
         if 'credential.txt' in os.listdir():
@@ -213,7 +244,7 @@ if __name__ == '__main__':
             os.remove('credential.txt')
             status = False
             print(username, password)
-            is_user_authenticated = sqlFuncs.userCredCheck(username, password)
+            is_user_authenticated = authentication(username, password)
             print(f'is_user_authenticated: {is_user_authenticated}')
             if is_user_authenticated:
                 print("Starting monitoring")
