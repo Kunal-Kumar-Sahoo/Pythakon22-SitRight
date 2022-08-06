@@ -55,7 +55,9 @@ class PoseDetector:
     def sendWarning(self) -> None:
         f = open('./warning.txt', 'w')
         f.close()
+        print("Warning sent")
         sqlFuncs.updateViolation(username, password)
+        print("Counter updated")
 
     def getVideoStream(self, camIdx: int) -> None:
         self.__file_name = camIdx
@@ -186,7 +188,9 @@ class PoseDetector:
 
 
 if __name__ == '__main__':
+    print('start1')
     t1 = time.time()
+    print('start2')
     username = ''
     password = ''
     status = True
@@ -194,6 +198,7 @@ if __name__ == '__main__':
         if 'credential.txt' in os.listdir():
             f = open('credential.txt')
             content = f.readlines()
+            print(content)
             username = content[0][:-1]
             password = content[1]
             print(username, content)
@@ -206,7 +211,7 @@ if __name__ == '__main__':
             if is_user_authenticated:
                 print("Starting monitoring")
                 pd = PoseDetector()
-                pd.getVideoStream(0)
+                pd.getVideoStream(4)
                 pd.processing()
             else:
                 pass
