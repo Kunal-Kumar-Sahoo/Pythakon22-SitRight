@@ -6,7 +6,7 @@ import time
 url = "https://api.pushbullet.com/v2/pushes"
 data = {'type': 'note', 'title': 'alert', 'body': 'Incorrect posture'}
 sess = requests.Session()
-sess.auth = ('o.JIYB9LelVfWIJEeL8ovfxTbDDxjwRcAu', '')
+sess.auth = ('o.JGFrXPIwv7ct0Ku06LEvptjn0gkGKWcC', '')
 sess.headers.update({'Content-Type': 'application/json'})
 
 data = {'type': 'note',
@@ -17,5 +17,4 @@ while True:
     if 'warning.txt' in file:
         r = sess.post('https://api.pushbullet.com/v2/pushes', data=json.dumps(data))
         os.remove('./warning.txt')
-
-[t]
+        time.sleep(30)

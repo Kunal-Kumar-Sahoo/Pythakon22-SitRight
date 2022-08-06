@@ -16,10 +16,8 @@ def handle(client):
             print('success')
             f.close()
         except Exception as e:
-            clients.remove(client)
-            client.close()
             print(e)
-            break
+            pass
 
 def receive():
     while True:

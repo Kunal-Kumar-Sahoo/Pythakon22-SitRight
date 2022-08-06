@@ -51,7 +51,7 @@ def updateViolation(username: str, number_of_violations: int = 1) -> None:
             cursor_obj.execute("UPDATE data_user SET userViolations = ? WHERE userName = ?", params2)
             break
 
-def getViolation(username: str, number_of_violations: int = 1) -> int:
+def getViolation(username: str) -> int:
     while True:
         # username = str(input("Enter the Username: "))
         cursor_obj.execute("SELECT userViolations FROM data_user WHERE userName = ?", username)

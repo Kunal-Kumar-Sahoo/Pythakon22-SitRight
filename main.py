@@ -56,7 +56,8 @@ class PoseDetector:
         f = open('./warning.txt', 'w')
         f.close()
         print("Warning sent")
-        sqlFuncs.updateViolation(username, password)
+        print('Updating counts')
+        # sqlFuncs.updateViolation(username)
         print("Counter updated")
 
     def getVideoStream(self, camIdx: int) -> None:
@@ -126,7 +127,7 @@ class PoseDetector:
                 cv2.circle(img, (rightShoulderX, rightShoulderY-100), 7, self.__colors['pink'], -1)
                 cv2.circle(img, (leftHipX, leftHipY), 7, self.__colors['yellow'], -1)
 
-                # cv2.circle(img, (leftHipX, leftHipY-100), 7, self.__colors['yellow'], -1)
+                cv2.circle(img, (leftHipX, leftHipY-100), 7, self.__colors['yellow'], -1)
 
                 angleTextString = f'Neck: {int(self.neckInclination)} Torso: {int(self.torsoInclination)}'
 
@@ -179,17 +180,19 @@ class PoseDetector:
                 cv2.imshow('Video feed:', img)
 
                 if cv2.waitKey(1) & 0xFF == ord('q'):
-                    t2 = time.time()
-                    quit.create_email(username, t2-t1, sqlFuncs.getViolation(username))
+                    # t2 = time.time()
+                    # quit.create_email(username, t2-t1, sqlFuncs.getViolation(username))
                     print('Quitting')
                     break
         except Exception as e:
+            print(e)
             self.processing()
+
 
 
 if __name__ == '__main__':
     print('start1')
-    t1 = time.time()
+    # t1 = time.time()
     print('start2')
     username = ''
     password = ''
@@ -199,8 +202,12 @@ if __name__ == '__main__':
             f = open('credential.txt')
             content = f.readlines()
             print(content)
-            username = content[0][:-1]
-            password = content[1]
+            try:
+                username = content[0][:-1]
+                password = content[1]
+            except Exception as e:
+                print(e)
+                continue
             print(username, content)
             f.close()
             os.remove('credential.txt')
